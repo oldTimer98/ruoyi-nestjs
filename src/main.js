@@ -1,7 +1,6 @@
 import { createApp } from 'vue'
 
 import Cookies from 'js-cookie'
-
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import locale from 'element-plus/es/locale/lang/zh-cn'
@@ -9,7 +8,6 @@ import locale from 'element-plus/es/locale/lang/zh-cn'
 import '@/assets/styles/index.scss' // global css
 
 import App from './App'
-import store from './store'
 import router from './router'
 import directive from './directive' // directive
 
@@ -65,9 +63,8 @@ app.component('ImageUpload', ImageUpload)
 app.component('ImagePreview', ImagePreview)
 app.component('RightToolbar', RightToolbar)
 app.component('Editor', Editor)
-
 app.use(router)
-app.use(store)
+app.use(createPinia())
 app.use(plugins)
 app.use(elementIcons)
 app.component('svg-icon', SvgIcon)
