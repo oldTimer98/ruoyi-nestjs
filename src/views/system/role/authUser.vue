@@ -47,9 +47,9 @@
             >批量取消授权</el-button>
          </el-col>
          <el-col :span="1.5">
-            <el-button 
-               type="warning" 
-               plain 
+            <el-button
+               type="warning"
+               plain
                icon="Close"
                @click="handleClose"
             >关闭</el-button>
@@ -118,8 +118,8 @@ const queryParams = reactive({
 function getList() {
   loading.value = true;
   allocatedUserList(queryParams).then(response => {
-    userList.value = response.rows;
-    total.value = response.total;
+    userList.value = response.data.rows;
+    total.value = response.data.total;
     loading.value = false;
   });
 }

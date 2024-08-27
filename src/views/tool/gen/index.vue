@@ -155,7 +155,7 @@
         </el-tab-pane>
       </el-tabs>
       </template>
-      
+
     </el-dialog>
     <excuteSql ref="excuteRef" @ok="handleQuery"></excuteSql>
     <import-table ref="importRef" @ok="handleQuery" />
@@ -232,8 +232,8 @@ function highlightedCode(code, key) {
 function getList() {
   loading.value = true;
   listTable(proxy.addDateRange(queryParams.value, dateRange.value)).then(response => {
-    tableList.value = response.rows;
-    total.value = response.total;
+    tableList.value = response.data.rows;
+    total.value = response.data.total;
     loading.value = false;
   });
 }

@@ -38,7 +38,7 @@
             <el-tooltip content="模块里面的子文件夹，例如 system" placement="top">
               <el-icon><question-filled /></el-icon>
             </el-tooltip>
-          </template> 
+          </template>
           <el-input v-model="info.moduleName" />
         </el-form-item>
       </el-col>
@@ -75,7 +75,7 @@
               <el-icon><question-filled /></el-icon>
             </el-tooltip>
           </template>
-          <el-radio v-model="info.genType" label="0">zip压缩包</el-radio>
+          <el-radio v-model="info.genType" value="0">zip压缩包</el-radio>
         </el-form-item>
       </el-col>
 
@@ -87,10 +87,15 @@
               <el-icon><question-filled /></el-icon>
             </el-tooltip>
           </template>
-         <template v-if="info.parentMenuId!=undefined && menuOptions?.length">
-          <tree-select v-model:value="info.parentMenuId" :show-count="true" :options="menuOptions"
-            :objMap="{ value: 'menuId', label: 'menuName', children: 'children' }" placeholder="请选择系统菜单" />
-         </template>
+          <template v-if="info.parentMenuId != undefined && menuOptions?.length">
+            <tree-select
+              v-model:value="info.parentMenuId"
+              :show-count="true"
+              :options="menuOptions"
+              :objMap="{ value: 'menuId', label: 'menuName', children: 'children' }"
+              placeholder="请选择系统菜单"
+            />
+          </template>
         </el-form-item>
       </el-col>
 
@@ -133,8 +138,12 @@
               </el-tooltip>
             </template>
             <el-select v-model="info.treeCode" placeholder="请选择">
-              <el-option v-for="(column, index) in info.columns" :key="index"
-                :label="column.columnName + '：' + column.columnComment" :value="column.columnName"></el-option>
+              <el-option
+                v-for="(column, index) in info.columns"
+                :key="index"
+                :label="column.columnName + '：' + column.columnComment"
+                :value="column.columnName"
+              ></el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -147,8 +156,12 @@
               </el-tooltip>
             </template>
             <el-select v-model="info.treeParentCode" placeholder="请选择">
-              <el-option v-for="(column, index) in info.columns" :key="index"
-                :label="column.columnName + '：' + column.columnComment" :value="column.columnName"></el-option>
+              <el-option
+                v-for="(column, index) in info.columns"
+                :key="index"
+                :label="column.columnName + '：' + column.columnComment"
+                :value="column.columnName"
+              ></el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -161,8 +174,12 @@
               </el-tooltip>
             </template>
             <el-select v-model="info.treeName" placeholder="请选择">
-              <el-option v-for="(column, index) in info.columns" :key="index"
-                :label="column.columnName + '：' + column.columnComment" :value="column.columnName"></el-option>
+              <el-option
+                v-for="(column, index) in info.columns"
+                :key="index"
+                :label="column.columnName + '：' + column.columnComment"
+                :value="column.columnName"
+              ></el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -181,8 +198,12 @@
               </el-tooltip>
             </template>
             <el-select v-model="info.subTableName" placeholder="请选择" @change="subSelectChange">
-              <el-option v-for="(table, index) in tables" :key="index"
-                :label="table.tableName + '：' + table.tableComment" :value="table.tableName"></el-option>
+              <el-option
+                v-for="(table, index) in tables"
+                :key="index"
+                :label="table.tableName + '：' + table.tableComment"
+                :value="table.tableName"
+              ></el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -195,78 +216,87 @@
               </el-tooltip>
             </template>
             <el-select v-model="info.subTableFkName" placeholder="请选择">
-              <el-option v-for="(column, index) in subColumns" :key="index"
-                :label="column.columnName + '：' + column.columnComment" :value="column.columnName"></el-option>
+              <el-option
+                v-for="(column, index) in subColumns"
+                :key="index"
+                :label="column.columnName + '：' + column.columnComment"
+                :value="column.columnName"
+              ></el-option>
             </el-select>
           </el-form-item>
         </el-col>
       </el-row>
     </template>
-
   </el-form>
 </template>
 
 <script setup>
-import { listMenu } from "@/api/system/menu";
-const subColumns = ref([]);
-const menuOptions = ref([]);
-const { proxy } = getCurrentInstance();
+import { listMenu } from '@/api/system/menu'
+const subColumns = ref([])
+const menuOptions = ref([])
+const { proxy } = getCurrentInstance()
 
 const props = defineProps({
   info: {
     type: Object,
-    default: null
+    default: null,
   },
   tables: {
     type: Array,
-    default: null
-  }
-});
+    default: null,
+  },
+})
 
 // 表单校验
 const rules = ref({
-  tplCategory: [{ required: true, message: "请选择生成模板", trigger: "blur" }],
-  packageName: [{ required: true, message: "请输入生成包路径", trigger: "blur" }],
-  moduleName: [{ required: true, message: "请输入生成模块名", trigger: "blur" }],
-  businessName: [{ required: true, message: "请输入生成业务名", trigger: "blur" }],
-  functionName: [{ required: true, message: "请输入生成功能名", trigger: "blur" }]
-});
+  tplCategory: [{ required: true, message: '请选择生成模板', trigger: 'blur' }],
+  packageName: [{ required: true, message: '请输入生成包路径', trigger: 'blur' }],
+  moduleName: [{ required: true, message: '请输入生成模块名', trigger: 'blur' }],
+  businessName: [{ required: true, message: '请输入生成业务名', trigger: 'blur' }],
+  functionName: [{ required: true, message: '请输入生成功能名', trigger: 'blur' }],
+})
 function subSelectChange(value) {
-  props.info.subTableFkName = "";
+  props.info.subTableFkName = ''
 }
 function tplSelectChange(value) {
-  if (value !== "sub") {
-    props.info.subTableName = "";
-    props.info.subTableFkName = "";
+  if (value !== 'sub') {
+    props.info.subTableName = ''
+    props.info.subTableFkName = ''
   }
 }
 function setSubTableColumns(value) {
   for (var item in props.tables) {
-    const name = props.tables[item].tableName;
+    const name = props.tables[item].tableName
     if (value === name) {
-      subColumns.value = props.tables[item].columns;
-      break;
+      subColumns.value = props.tables[item].columns
+      break
     }
   }
 }
 /** 查询菜单下拉树结构 */
 function getMenuTreeselect() {
   listMenu().then(response => {
-    let menus = proxy.handleTree(response.data, "menuId")
-    menus.unshift({menuId:0,menuName:"顶级目录"})
-    menuOptions.value = menus;
-  });
+    let menus = proxy.handleTree(response.data, 'menuId')
+    menus.unshift({ menuId: 0, menuName: '顶级目录' })
+    menuOptions.value = menus
+  })
 }
 
-watch(() => props.info.subTableName, val => {
-  setSubTableColumns(val);
-});
+watch(
+  () => props.info.subTableName,
+  val => {
+    setSubTableColumns(val)
+  },
+)
 
-watch(() => props.info.tplWebType, val => {
-  if (val === '') {
-    props.info.tplWebType = "element-plus";
-  }
-});
+watch(
+  () => props.info.tplWebType,
+  val => {
+    if (val === '') {
+      props.info.tplWebType = 'element-plus'
+    }
+  },
+)
 
-getMenuTreeselect();
+getMenuTreeselect()
 </script>

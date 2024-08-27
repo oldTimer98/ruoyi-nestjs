@@ -7,15 +7,19 @@
           :key="item.value"
           :index="index"
           :class="item.elTagClass"
-        >{{ item.label + " " }}</span>
+        >
+          {{ item.label + ' ' }}
+        </span>
         <el-tag
           v-else
-          :disable-transitions="true"
+          disable-transitions
           :key="item.value + ''"
           :index="index"
-          :type="item.elTagType === 'primary' ? '' : item.elTagType"
+          :type="item.elTagType === 'primary' ? 'primary' : item.elTagType"
           :class="item.elTagClass"
-        >{{ item.label + " " }}</el-tag>
+        >
+          {{ item.label + ' ' }}
+        </el-tag>
       </template>
     </template>
     <template v-if="unmatch && showValue">
@@ -26,7 +30,7 @@
 
 <script setup>
 // 记录未匹配的项
-const unmatchArray = ref([]);
+const unmatchArray = ref([])
 
 const props = defineProps({
   // 数据
@@ -43,17 +47,17 @@ const props = defineProps({
   },
   separator: {
     type: String,
-    default: ",",
-  }
-});
+    default: ',',
+  },
+})
 
 const values = computed(() => {
-  if (props.value === null || typeof props.value === 'undefined' || props.value === '') return [];
-  return Array.isArray(props.value) ? props.value.map(item => '' + item) : String(props.value).split(props.separator);
-});
+  if (props.value === null || typeof props.value === 'undefined' || props.value === '') return []
+  return Array.isArray(props.value) ? props.value.map(item => '' + item) : String(props.value).split(props.separator)
+})
 
 const unmatch = computed(() => {
-  unmatchArray.value = [];
+  unmatchArray.value = []
   // 没有value不显示
   if (props.value === null || typeof props.value === 'undefined' || props.value === '') return false
   // 传入值为数组
@@ -65,13 +69,13 @@ const unmatch = computed(() => {
     }
   })
   return unmatch // 返回标志的值
-});
+})
 
 function handleArray(array) {
-  if (array.length === 0) return "";
+  if (array.length === 0) return ''
   return array.reduce((pre, cur) => {
-    return pre + " " + cur;
-  });
+    return pre + ' ' + cur
+  })
 }
 </script>
 
