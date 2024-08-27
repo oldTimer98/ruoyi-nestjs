@@ -201,8 +201,7 @@
 </template>
 
 <script setup name="User">
-import { getToken } from '@/utils/auth'
-import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from '@/api/system/user'
+import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect, getUserDetail } from '@/api/system/user'
 
 const router = useRouter()
 const { proxy } = getCurrentInstance()
@@ -343,19 +342,6 @@ function handleStatusChange(row) {
       row.status = row.status === '0' ? '1' : '0'
     })
 }
-/** 更多操作 */
-function handleCommand(command, row) {
-  switch (command) {
-    case 'handleResetPwd':
-      handleResetPwd(row)
-      break
-    case 'handleAuthRole':
-      handleAuthRole(row)
-      break
-    default:
-      break
-  }
-}
 /** 跳转角色分配 */
 function handleAuthRole(row) {
   const userId = row.userId
@@ -385,28 +371,6 @@ function handleSelectionChange(selection) {
   multiple.value = !selection.length
 }
 
-/** 下载模板操作 */
-function importTemplate() {
-  proxy.download('system/user/importTemplate', {}, `user_template_${new Date().getTime()}.xlsx`)
-}
-/**文件上传中处理 */
-const handleFileUploadProgress = (event, file, fileList) => {
-  upload.isUploading = true
-}
-/** 文件上传成功处理 */
-const handleFileSuccess = (response, file, fileList) => {
-  upload.open = false
-  upload.isUploading = false
-  proxy.$refs['uploadRef'].handleRemove(file)
-  proxy.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + response.msg + '</div>', '导入结果', {
-    dangerouslyUseHTMLString: true,
-  })
-  getList()
-}
-/** 提交上传文件 */
-function submitFileForm() {
-  proxy.$refs['uploadRef'].submit()
-}
 /** 重置操作表单 */
 function reset() {
   form.value = {
@@ -434,8 +398,8 @@ function cancel() {
 function handleAdd() {
   reset()
   getUser().then(response => {
-    postOptions.value = response.posts
-    roleOptions.value = response.roles
+    postOptions.value = response.data.posts
+    roleOptions.value = response.data.roles
     open.value = true
     title.value = '添加用户'
     form.value.password = initPassword.value
@@ -445,12 +409,12 @@ function handleAdd() {
 function handleUpdate(row) {
   reset()
   const userId = row.userId || ids.value
-  getUser(userId).then(response => {
+  getUserDetail({ userId }).then(response => {
     form.value = response.data
-    postOptions.value = response.posts
-    roleOptions.value = response.roles
-    form.value.postIds = response.postIds
-    form.value.roleIds = response.roleIds
+    postOptions.value = response.data.posts
+    roleOptions.value = response.data.roles
+    form.value.postIds = response.data.postIds
+    form.value.roleIds = response.data.roleIds
     open.value = true
     title.value = '修改用户'
     form.password = ''

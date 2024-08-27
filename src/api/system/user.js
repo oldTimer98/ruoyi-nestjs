@@ -1,29 +1,38 @@
 import request from '@/utils/request'
-import { parseStrEmpty } from "@/utils/ruoyi";
 
 // 查询用户列表
-export function listUser(query) {
+export function listUser(data) {
   return request({
     url: '/system/user/list',
-    method: 'get',
-    params: query
+    method: 'post',
+    data,
   })
 }
 
 // 查询用户详细
-export function getUser(userId) {
+export function getUser(data) {
   return request({
-    url: '/system/user/' + parseStrEmpty(userId),
-    method: 'get'
+    url: '/system/user/getRolePost',
+    method: 'post',
+    data,
+  })
+}
+
+// 查询用户详细
+export function getUserDetail(params) {
+  return request({
+    url: '/system/user/detail',
+    method: 'get',
+    params,
   })
 }
 
 // 新增用户
 export function addUser(data) {
   return request({
-    url: '/system/user',
+    url: '/system/user/add',
     method: 'post',
-    data: data
+    data: data,
   })
 }
 
@@ -32,7 +41,7 @@ export function updateUser(data) {
   return request({
     url: '/system/user',
     method: 'put',
-    data: data
+    data: data,
   })
 }
 
@@ -40,7 +49,7 @@ export function updateUser(data) {
 export function delUser(userId) {
   return request({
     url: '/system/user/' + userId,
-    method: 'delete'
+    method: 'delete',
   })
 }
 
@@ -48,12 +57,12 @@ export function delUser(userId) {
 export function resetUserPwd(userId, password) {
   const data = {
     userId,
-    password
+    password,
   }
   return request({
     url: '/system/user/resetPwd',
     method: 'put',
-    data: data
+    data: data,
   })
 }
 
@@ -61,12 +70,12 @@ export function resetUserPwd(userId, password) {
 export function changeUserStatus(userId, status) {
   const data = {
     userId,
-    status
+    status,
   }
   return request({
     url: '/system/user/changeStatus',
     method: 'put',
-    data: data
+    data: data,
   })
 }
 
@@ -74,7 +83,7 @@ export function changeUserStatus(userId, status) {
 export function getUserProfile() {
   return request({
     url: '/system/user/profile',
-    method: 'get'
+    method: 'get',
   })
 }
 
@@ -83,20 +92,16 @@ export function updateUserProfile(data) {
   return request({
     url: '/system/user/profile',
     method: 'put',
-    data: data
+    data: data,
   })
 }
 
 // 用户密码重置
-export function updateUserPwd(oldPassword, newPassword) {
-  const data = {
-    oldPassword,
-    newPassword
-  }
+export function updateUserPwd(data) {
   return request({
     url: '/system/user/profile/updatePwd',
     method: 'put',
-    params: data
+    params: data,
   })
 }
 
@@ -105,7 +110,7 @@ export function uploadAvatar(data) {
   return request({
     url: '/system/user/profile/avatar',
     method: 'post',
-    data: data
+    data: data,
   })
 }
 
@@ -113,7 +118,7 @@ export function uploadAvatar(data) {
 export function getAuthRole(userId) {
   return request({
     url: '/system/user/authRole/' + userId,
-    method: 'get'
+    method: 'get',
   })
 }
 
@@ -122,7 +127,7 @@ export function updateAuthRole(data) {
   return request({
     url: '/system/user/authRole',
     method: 'put',
-    params: data
+    params: data,
   })
 }
 
@@ -130,6 +135,6 @@ export function updateAuthRole(data) {
 export function deptTreeSelect() {
   return request({
     url: '/system/user/deptTree',
-    method: 'get'
+    method: 'get',
   })
 }

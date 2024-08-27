@@ -288,6 +288,7 @@ function handleStatusChange(row) {
     })
     .then(() => {
       proxy.$modal.msgSuccess(text + '成功')
+      getList()
     })
     .catch(function () {
       row.status = row.status === '0' ? '1' : '0'
@@ -366,7 +367,7 @@ function handleUpdate(row) {
     open.value = true
     nextTick(() => {
       roleMenu.then(res => {
-        let checkedKeys = res.checkedKeys
+        let checkedKeys = res.data.checkedKeys
         checkedKeys.forEach(v => {
           nextTick(() => {
             menuRef.value.setChecked(v, true, false)
@@ -380,14 +381,14 @@ function handleUpdate(row) {
 /** 根据角色ID查询菜单树结构 */
 function getRoleMenuTreeselect(roleId) {
   return roleMenuTreeselect(roleId).then(response => {
-    menuOptions.value = response.menus
+    menuOptions.value = response.data.menus
     return response
   })
 }
 /** 根据角色ID查询部门树结构 */
 function getDeptTree(roleId) {
   return deptTreeSelect(roleId).then(response => {
-    deptOptions.value = response.depts
+    deptOptions.value = response.data.depts
     return response
   })
 }
