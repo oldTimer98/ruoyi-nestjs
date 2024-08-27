@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 
 import Cookies from 'js-cookie'
+
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import locale from 'element-plus/es/locale/lang/zh-cn'
@@ -41,7 +42,8 @@ import ImagePreview from "@/components/ImagePreview"
 import TreeSelect from '@/components/TreeSelect'
 // 字典标签组件
 import DictTag from '@/components/DictTag'
-
+//文件列表显示组件
+import FileList from "@/components/FileList"
 const app = createApp(App)
 
 // 全局方法挂载

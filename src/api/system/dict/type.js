@@ -52,9 +52,9 @@ export function refreshCache() {
 }
 
 // 获取字典选择框列表
-export function optionSelect() {
+export function optionselect() {
   return request({
-    url: '/system/dict/type/optionSelect',
+    url: '/system/dict/type/optionselect',
     method: 'get'
   })
 }

@@ -41,7 +41,6 @@
           type="primary"
           plain
           icon="Download"
-          :disabled="multiple"
           @click="handleGenTable"
           v-hasPermi="['tool:gen:code']"
         >生成</el-button>
@@ -50,10 +49,10 @@
         <el-button
           type="primary"
           plain
-          icon="Plus"
-          @click="openCreateTable"
+          icon="caret-right"
+          @click="openExcuteSql"
           v-hasRole="['admin']"
-        >创建</el-button>
+        >执行sql</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -143,20 +142,23 @@
     />
     <!-- 预览界面 -->
     <el-dialog :title="preview.title" v-model="preview.open" width="80%" top="5vh" append-to-body class="scrollbar">
-      <el-tabs v-model="preview.activeName">
+      <template v-if="preview.data">
+        <el-tabs v-model="preview.activeName">
         <el-tab-pane
           v-for="(value, key) in preview.data"
           :label="key.substring(key.lastIndexOf('/')+1,key.indexOf('.vm'))"
           :name="key.substring(key.lastIndexOf('/')+1,key.indexOf('.vm'))"
-          :key="value"
+          :key="key"
         >
           <el-link :underline="false" icon="DocumentCopy" v-copyText="value" v-copyText:callback="copyTextSuccess" style="float:right">&nbsp;复制</el-link>
-          <pre>{{ value }}</pre>
+          <pre><code class="hljs" v-html="highlightedCode(value, key)"></code></pre>
         </el-tab-pane>
       </el-tabs>
+      </template>
+      
     </el-dialog>
+    <excuteSql ref="excuteRef" @ok="handleQuery"></excuteSql>
     <import-table ref="importRef" @ok="handleQuery" />
-    <create-table ref="createRef" @ok="handleQuery" />
   </div>
 </template>
 
@@ -164,7 +166,19 @@
 import { listTable, previewTable, delTable, genCode, synchDb } from "@/api/tool/gen";
 import router from "@/router";
 import importTable from "./importTable";
-import createTable from "./createTable";
+import excuteSql from "./excuteSql.vue";
+import hljs from 'highlight.js';
+import "highlight.js/styles/atom-one-light.min.css"
+import javascript from "highlight.js/lib/languages/javascript"
+import typescript from "highlight.js/lib/languages/typescript"
+import sql from "highlight.js/lib/languages/sql"
+import html from "highlight.js/lib/languages/xml"
+import vue from "highlight.js/lib/languages/xml"
+hljs.registerLanguage("javascript", javascript);
+hljs.registerLanguage("typescript", typescript);
+hljs.registerLanguage("sql", sql);
+hljs.registerLanguage("html", html);
+hljs.registerLanguage("vue", vue);
 
 const route = useRoute();
 const { proxy } = getCurrentInstance();
@@ -190,8 +204,8 @@ const data = reactive({
   preview: {
     open: false,
     title: "代码预览",
-    data: {},
-    activeName: "domain.java"
+    data: null,
+    activeName: "service.ts"
   }
 });
 
@@ -207,7 +221,13 @@ onActivated(() => {
     getList();
   }
 })
-
+/** 高亮显示 */
+function highlightedCode(code, key) {
+  const vmName = key.substring(key.lastIndexOf("/") + 1, key.indexOf(".vm"));
+  let language = vmName.substring(vmName.indexOf(".") + 1, vmName.length);
+  const result = hljs.highlight(language, code || "", true);
+  return result.value || '&nbsp;';
+}
 /** 查询表集合 */
 function getList() {
   loading.value = true;
@@ -217,13 +237,11 @@ function getList() {
     loading.value = false;
   });
 }
-
 /** 搜索按钮操作 */
 function handleQuery() {
   queryParams.value.pageNum = 1;
   getList();
 }
-
 /** 生成代码操作 */
 function handleGenTable(row) {
   const tbNames = row.tableName || tableNames.value;
@@ -231,15 +249,15 @@ function handleGenTable(row) {
     proxy.$modal.msgError("请选择要生成的数据");
     return;
   }
-  if (row.genType === "1") {
+  proxy.$download.zip("/tool/gen/batchGenCode?tables=" + tbNames, "carole.zip");
+ /*  if (row.genType === "1") {
     genCode(row.tableName).then(response => {
       proxy.$modal.msgSuccess("成功生成到自定义路径：" + row.genPath);
     });
   } else {
-    proxy.$download.zip("/tool/gen/batchGenCode?tables=" + tbNames, "ruoyi.zip");
-  }
+    proxy.$download.zip("/tool/gen/batchGenCode?tables=" + tbNames, "carole.zip");
+  } */
 }
-
 /** 同步数据库操作 */
 function handleSynchDb(row) {
   const tableName = row.tableName;
@@ -249,38 +267,37 @@ function handleSynchDb(row) {
     proxy.$modal.msgSuccess("同步成功");
   }).catch(() => {});
 }
-
 /** 打开导入表弹窗 */
 function openImportTable() {
   proxy.$refs["importRef"].show();
 }
-
-/** 打开创建表弹窗 */
-function openCreateTable() {
-  proxy.$refs["createRef"].show();
+/** 打开执行sql弹窗 */
+function openExcuteSql() {
+  proxy.$refs["excuteRef"].show();
 }
-
 /** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = [];
   proxy.resetForm("queryRef");
   handleQuery();
 }
-
 /** 预览按钮 */
 function handlePreview(row) {
+  preview.value.data = null
   previewTable(row.tableId).then(response => {
     preview.value.data = response.data;
     preview.value.open = true;
-    preview.value.activeName = "domain.java";
+    preview.value.activeName = "service.ts";
+    nextTick(()=>{
+      document.querySelector(".el-dialog__body").scrollTop=0
+    })
+
   });
 }
-
 /** 复制代码成功 */
 function copyTextSuccess() {
   proxy.$modal.msgSuccess("复制成功");
 }
-
 // 多选框选中数据
 function handleSelectionChange(selection) {
   ids.value = selection.map(item => item.tableId);
@@ -288,13 +305,11 @@ function handleSelectionChange(selection) {
   single.value = selection.length != 1;
   multiple.value = !selection.length;
 }
-
 /** 修改按钮操作 */
 function handleEditTable(row) {
   const tableId = row.tableId || ids.value[0];
   router.push({ path: "/tool/gen-edit/index/" + tableId, query: { pageNum: queryParams.value.pageNum } });
 }
-
 /** 删除按钮操作 */
 function handleDelete(row) {
   const tableIds = row.tableId || ids.value;
