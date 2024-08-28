@@ -29,10 +29,12 @@
     margin: 0;
   }
 
-  font-family: 'open sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-size: 13px;
-  color: #676a6c;
-  overflow-x: hidden;
+  & {
+    font-family: 'open sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    color: #676a6c;
+    overflow-x: hidden;
+  }
 
   ul {
     list-style-type: none;
